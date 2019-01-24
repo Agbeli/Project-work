@@ -8,6 +8,6 @@ Machine learning is the ability for a computer to learn and make a rational deci
 
 Background of the game 
 ---
-The essay seek to address the tennis on paper game. a two-player game where both players have complete information about the game. Here is the rules to the game;
+The project seek to address the tennis on paper game. a two-player game where both players have complete information about the game. Here is the rules to the game;
 
 The field of the game is represented by seven fields and central line. The nature is shown in this form (-3,-2,-1,0,1,2,3) where negative fields belonging to player 1, positive fields belong to player 2. There is a centreline(0) indicating the initial position of the ball start of play by both players. The Figure 1.1 represents the layout of the game indicating the possible position to be occupy by the ball during the period of play. 
