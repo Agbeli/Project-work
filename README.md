@@ -20,3 +20,4 @@ The field of the game is represented by seven fields and central line. The natur
 - In both cases, the game is lost for the player whose side the ball is located at the end of play.
 - A score of two points is allocated if the moves beyond the playing field, otherwise a score of one is allocated.
 
+The link provide detail description and the mathematics behind the game [https://en.wikipedia.org/wiki/Tennis_(paper_game)](#Tennis game)
