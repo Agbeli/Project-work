@@ -1,0 +1,786 @@
+
+#############################################################################
+############ REDEFINING THE CODE ############################################
+#############################################################################
+
+#Centre takes 0
+#Player_ 1 takes the position of c(1,2,3)
+#Player_2 takes the position of c(-1,-2,-3)
+
+
+###Human bids 
+Human_bid <- function(maxpoint){
+  while(TRUE){
+    human<-as.numeric(readline("Enter a bid: "))
+    if(human > maxpoint){
+      cat("Make a bid between 1 and ",maxpoint)
+    }else{
+      FALSE
+      break
+    }
+  }
+  return(human)
+}
+
+
+# Initial machine bid with equal probability and random..
+Machine_1 <- function(Point_pl,Point_opp,ball,output){
+  if(Point_pl <= 0){
+    Com = 0
+  }else{
+    Com = floor(runif(1,1,Point_pl))
+  }
+  return(Com)
+}
+
+Machine_2 <- function(Point_pl,Point_opp,ball,output){
+  if(Point_pl <= 0){
+    Com2 = 0
+  }else if(Point_pl==1){
+    Com2 =1
+  }else{
+    First = ceiling(Point_pl*0.2)
+    Second = ceiling(Point_pl*0.8)
+    Com2 = rhyper(1,First,Second,Point_pl)
+    if(Com2==0 || Com2 > Point_pl){
+      Com2 = 1
+    }else{
+      Com2
+    }
+  }
+  return(Com2)
+}
+
+
+# Second machine with 0.35 selection of points.
+Machine_3 <- function(Point_pl,Point_opp,ball,output){
+  if(Point_pl <= 0){
+    bid =0
+  }else {
+    bid = ceiling(Point_pl*0.35)
+  }
+  return(bid)
+}
+
+# Second machine with quarter binomial selection which is better off than the
+#previous machine.
+Machine_4 <- function(Point_pl,Point_opp,ball,output){
+  if(Point_pl <= 0){
+    bid =0
+  }else if(Point_pl==1){
+    bid =1
+  }else {
+    bid = qbinom(0.8,Point_pl,0.2)
+  }
+  return(bid)
+}
+
+Machine_5 <- function(Point_pl,Point_opp,ball,output){
+  if(Point_pl <= 0){
+    com5 = 0
+  }else{
+    com5 = rbinom(1,Point_pl,0.5)
+    if(com5 == 0){
+      com5=1
+    }else{
+      com5
+    }
+  }
+  return(com5)
+}
+
+Machine_6 <- function(Point_pl,Point_opp,ball,output){
+  if(Point_pl <= 0){
+    com6 <- 0
+  }else{
+    if(Point_pl >= 49){#plays only 1 the first two rounds
+      com6 <- 1
+    }else{
+      com6 = max(1,rbinom(1,Point_pl,0.7),1)#plays very high later 
+    }
+  }
+  return(com6)
+}
+
+
+
+
+Machine_7 <- function(Point_pl,Point_opp,ball,output){
+  if(Point_pl <= 0){
+    com7 = 0
+  }else{
+    com7 = rbinom(1,Point_pl,0.35)
+    if(com7 == 0){
+      com7 = 1
+    }else{
+      com7
+    }
+  }
+  return(com7)
+}
+
+
+
+
+Machine_8 <- function(Point_pl,Point_opp,ball,output){
+  if(Point_pl <= 0){
+    com8 <- 0
+  }else{
+    if(Point_pl == 50){   # plays small the first round
+      com8 <- max(rbinom(1,Point_pl,0.05),1)
+    }else{
+      com8 <- max(rbinom(1,Point_pl,0.4),1)# plays very high later 
+    }
+  }
+  return(com8)
+}
+
+
+Machine_9 <- function(Point_pl,Point_opp,ball,output){
+  if(Point_pl <= 0){
+    Com9 = 0
+  }else {
+    Com9 = ceiling((Point_pl+1)/3)
+  }
+  return(Com9)
+}
+
+
+Machine_10 <- function(Point_pl,Point_opp,ball,output){
+  if(Point_pl <= 0){
+    Com10 = 0
+  }else{
+   Com10 = rpois(Point_pl,2)
+   Com10 = max(Com10)
+   if(Com10 == 0 || Com10 > Point_pl){
+     Com10 = 1
+   }else{
+     Com10
+   }
+  }
+  return(Com10)
+}
+
+Machine_11 <- function(Point_pl,Point_opp,ball,output){
+  if(Point_pl <= 0){
+    Com11 = 0
+  }else {
+    Com11 = rpois(Point_pl,5)
+    Com11 = max(Com11)
+    if(Com11 == 0 || Com11 > Point_pl){
+      Com11 = 1
+    }else{
+      Com11
+    }
+  }
+  return(Com11)
+}
+
+Machine_12 <- function(Point_pl,Point_opp,ball,output){
+  if(Point_pl <= 0){
+    Com12 = 0
+  }else {
+    Com12 = rpois(Point_pl,8)
+    Com12 = ceiling((max(Com12)-min(Com12))/2)
+    if(Com12 == 0 || Com12 > Point_pl){
+      Com12 = 1
+    }else{
+      Com12
+    }
+  }
+  return(Com12)
+}
+
+Machine_13 <- function(Point_pl,Point_opp,ball,output){
+  if(Point_pl <= 0){
+    Com13 <- 0
+  }else{
+    if( (ball <= -2) &&(Point_pl>=Point_opp)){#plays winning move when it can
+      Com13<-max(Point_opp,1)
+    }else{
+      if(ball <= 1){#plays small when does not need to play high
+        Com13 <- min(Point_pl,max(rbinom(1,10,0.03),1))
+      }else{
+        Com13 <- min(Point_pl,max(rbinom(1,Point_opp,0.98),1))#plays very high when in danger, but not higher than points of opponent 
+      }
+    }
+  }
+  return(Com13)
+}
+
+
+
+
+Machine_14 <- function(Point_pl,Point_opp,ball,output){
+  if(Point_pl <= 0){
+    Com14 = 0
+  }else if(Point_pl==1){
+    Com14 =1
+  }else{
+    First = ceiling(Point_pl*0.4)
+    Second = ceiling(Point_pl*0.6)
+    Com14 = rhyper(1,First,Second,Point_pl)
+    if(Com14==0 || Com14 > Point_pl){
+      Com14 = 1
+    }else{
+      Com14
+    }
+  }
+  return(Com14)
+}
+
+Machine_15 <- function(Point_pl,Point_opp,ball,output){
+  if(Point_pl <= 0){
+    Com15 = 0
+  }else {
+    Com15 = rnbinom(1,Point_pl,0.7)
+    if(Com15==0 || Com15 >Point_pl){
+      Com15 =1
+    }else{
+      Com15
+    }
+  }
+  return(Com15)
+}
+
+Machine_17 <- function(Point_pl,Point_opp,ball,output){
+  if(Point_pl <= 0){
+    Com13 <- 0
+  }else{
+    if( (ball <= -2) &&(Point_pl>=Point_opp)){#plays winning move when it can
+      Com13<-max(Point_opp,1)
+    }else{
+      if(ball <= 1){#plays small when does not need to play high
+        Com13 <- min(Point_pl,max(rbinom(1,10,0.03),1))
+      }else{
+        Com13 <- min(Point_pl,max(rbinom(1,Point_opp,0.98),1))#plays very high when in danger, but not higher than points of opponent 
+      }
+    }
+  }
+  return(Com13)
+}
+
+
+maxpoint =50	
+
+# Define an initial strategy for the machine 
+defstrat<-function(INITPUNKT=1){
+  stratyx=rep(0,(maxpoint +1)*(maxpoint +1)*5*(maxpoint +1))
+  dim(stratyx)<-c(maxpoint +1,maxpoint +1,5,maxpoint +1) ## The four dimensional array 
+  
+  for (v4 in 2:maxpoint )					
+    stratyx[(maxpoint +1),(maxpoint +1),3,v4] = maxpoint +1+INITPUNKT-v4  
+  
+  # allowed trains, except zeros
+  for (v1 in 2:(maxpoint))
+    for (v2 in 1:(maxpoint))
+      for (v4 in 2:(maxpoint))
+        if (v4<=v1 && v4<=v2+1)		# Only permitted moves and never more than enemies + 1 (Efficient!)
+          for (v3 in 1:5)
+            if (v3!=3)			
+              stratyx[v1,v2,v3,v4]=INITPUNKT
+  else if(v1==v2)	
+    stratyx[v1,v2,v3,v4]=INITPUNKT
+
+  for (v2 in 1:(maxpoint))
+    for (v3 in 1:5)
+      stratyx[1,v2,v3,1]=INITPUNKT			
+  
+  return(stratyx)                     
+}
+
+INPOINT = 1
+MINPOINTS = 1
+LEARNPOINTS = rep(0,3)
+dim(LEARNPOINTS) <- c(1,3)
+LEARNPOINTS[1] = 1
+LEARNPOINTS[2] = 1
+LEARNPOINTS[3] = 1
+
+### To strigger the initial strategy 
+erstinit<-function(){
+  zuz = defstrat(INITPUNKT=1)
+  straty <<- rep(0,dim(zuz)[1]*dim(zuz)[2]*dim(zuz)[3]*dim(zuz)[4])
+  dim(straty) <<- c(1,dim(zuz))
+  
+  straty[1,,,,] <<- defstrat(INITPUNKT=INPOINT)
+  NumberofPlay <<- 0			
+  POINTS <<- 0 
+  LEARN <<- 0
+}
+
+erstinit()
+
+
+#### Next move of the machine
+
+
+Machine_16=function(Point_pl,Point_opp,ball,output="Yes"){
+  veccy=c(0,straty[1, Point_pl+1, Point_opp+1, ball+3,])
+  if(output=="Yes")
+    cat(veccy,"\n")
+  
+  choice=ceiling(runif(1,min=0,max=sum(veccy)))   
+  vecu=veccy
+  lvec=length(veccy)
+  for (ii in 1:lvec)
+    vecu[ii]=sum(veccy[1:ii])
+  Com16=max((1:lvec)[vecu<choice])-1       
+  return(Com16)  
+}
+
+# Update the strategy after each play 
+
+updatestrat=function(chain,value){
+  chainy = colSums(abs(chain))	
+  Com16 = max((1:length(chainy))[chainy>0])
+  {
+    LEARN <<- LEARN +1
+    pointy=(LEARNPOINTS[abs(value)])*(-value)
+    for(ii in 1:Com16){
+      coly=chain[,ii]
+      straty[1,coly[1]+1,coly[2]+1,coly[3]+3, coly[4]+1] <<-
+        max(c(straty[1,coly[1]+1,coly[2]+1,coly[3]+3, coly[4]+1]+pointy, MINPOINTS))
+      straty[1,coly[2]+1,coly[1]+1, -coly[3]+3, coly[5]+1] <<-
+        max(c(straty[1,coly[2]+1,coly[1]+1, -coly[3]+3, coly[5]+1]-pointy, MINPOINTS))
+    }
+  }
+}
+
+
+
+
+### Output of each draw 
+
+Output <- function(Player_1,Player_2,ball,maxpoint1,maxpoint2,output){
+if(output=="Yes"){
+if(ball==0){
+  cat("Status = ",ball,"(center)","\n")
+  cat("Current points for Player_1 = ",maxpoint1,"\n")
+  cat("Current points for Player_2 =  ",maxpoint2,"\n")  
+}else if(ball %in% c(-3,-2,-1)){
+cat("Player_1 bid = ",Player_1,"\n")
+cat("Player_2 bid = ",Player_2,"\n")
+cat("state= ",ball,"(Player_2 side)","\n")
+cat("Current points for Player_1 = ",maxpoint1,"\n")
+cat("Current points for Player_2 = ",maxpoint2,"\n")
+}else if(ball %in% c(3,2,1)){
+  cat("Player_1 bid = ",Player_1,"\n")
+  cat("Player_2 bid = ",Player_2,"\n")
+  cat("state= ",ball,"(Player_1 side)","\n")
+  cat("Current points for Player_1 = ",maxpoint1,"\n")
+  cat("Current points for Player_2 = ",maxpoint2,"\n")
+}
+}
+}
+
+
+
+#The Evaluation function is used to check the position of the ball after every 
+# bid of each players 
+Evaluation <- function(Player1,Player2,ball){
+  if(Player1 == Player2)
+    bz=ball
+  else 
+    if(Player1 < Player2)
+      if(ball <= 0)         # when the draw of Player1 is greater than Player2
+        bz=1
+      else
+        bz=ball+1
+    else if(Player1 > Player2)
+      if(ball >= 0)  # when the draw of Player1 is smaller than Player2
+        bz=-1
+      else
+        bz=ball-1
+  return(bz)
+}
+
+
+
+
+#Evaluation of winner of the game.
+Winner <- function(ball,output){
+  if(ball ==  -3){
+    if(output == "Yes"){
+      cat("=====Victory for Player_1=====","\n")}
+  }else if(ball == 3){
+    if(output == "Yes"){
+      cat("=====Victory for Player_2=====","\n")
+  }
+}
+}
+
+
+
+###### Call the type of strategy 
+Computer_bid <- function(Point_pl,Point_opp,ball,output,Player){ #Select type of machine 
+  get(paste('Machine_',as.character(Player),sep=""))(Point_pl,Point_opp,ball,output)
+}
+
+
+
+
+######## The play function execute the tournament match between two strategies 
+
+Play <- function(maxpoint,auto,Player1,Player2,output="No"){
+  recordstatus=rep(0,5*maxpoint)
+  dim(recordstatus)<-c(5,maxpoint)
+  timeline <- 1
+  ball = 0
+  maxpoint1 <- maxpoint
+  maxpoint2 <- maxpoint
+  Output1 = Output(Player_1,Player_2,ball,maxpoint1,maxpoint2,output)
+  if(auto==0){
+    while (ball !=-3 && ball!=3) {
+      Player_1 <- Human_bid(maxpoint1)  
+      Player_2 <- Human_bid(maxpoint2)
+      maxpoint1 = maxpoint1-Player_1 
+      maxpoint2 = maxpoint2-Player_2
+      ball = Evaluation(Player_1, Player_2,ball)
+      output2 = Output(Player_1,Player_2,ball,maxpoint1,maxpoint2,output)
+      Winner(ball,output)
+      if (maxpoint1 == 0 && maxpoint2 == 0){
+        if(output == "Yes"){cat("Game over","\n")}
+        break
+      }
+  }
+  }else if(auto==1){
+    while (ball !=-3 && ball!=3) {
+      Player_1 <- Human_bid(maxpoint1)  
+      Player_2 <- Computer_bid(Point_pl=maxpoint2,Point_opp=maxpoint1,ball,output,Player2)
+      recordstatus[,timeline]=c(maxpoint1,maxpoint2,ball,Player_1,Player_2)
+      maxpoint1 = maxpoint1-Player_1 
+      maxpoint2 = maxpoint2-Player_2
+      ball = Evaluation(Player_1, Player_2,ball)
+      timeline = timeline +1
+      output2 = Output(Player_1,Player_2,ball,maxpoint1,maxpoint2,output)
+      Winner(ball,output)
+      if (maxpoint1 == 0 && maxpoint2 == 0){
+        if(output == "Yes"){cat("Game over","\n")}
+        break
+      }
+      
+    }
+    NumberofPlay<<- NumberofPlay + 1 
+    if(ball != 0){
+      updatestrat(chain = recordstatus,value = ball)
+    }
+  }else if(auto==2){
+    while (ball !=-3 && ball !=3) {
+      Player_1 <- Computer_bid(Point_pl=maxpoint1,Point_opp=maxpoint2,ball,output,Player1)
+      Player_2  <- Computer_bid(Point_pl=maxpoint2,Point_opp=maxpoint1,ball,output,Player2)
+      recordstatus[,timeline]=c(maxpoint1,maxpoint2,ball,Player_1,Player_2)
+      maxpoint1 = maxpoint1-Player_1
+      maxpoint2 = maxpoint2- Player_2
+      ball = Evaluation(Player_1, Player_2,ball)
+      timeline = timeline +1
+      output2 = Output(Player_1,Player_2,ball,maxpoint1,maxpoint2,output)
+      Winner(ball,output)
+      if (maxpoint1 == 0 && maxpoint2 == 0){
+        if(output == "Yes"){cat("Game over","\n")}
+        break
+      }
+    }
+    if(Player_1 == 16 || Player2 == 16){
+    NumberofPlay <<- NumberofPlay + 1
+    if(ball != 0){ # Update the strategy if the outcome of the ball is different from 0.
+      updatestrat(chain = recordstatus,value = ball)
+      if(ball > 0)
+        POINTS<<-POINTS +ball
+      else
+        POINTS<<-POINTS -ball
+    }
+    }
+  }
+  return(ball)
+}
+
+
+###### The function Playchain call indicates  the number of times the play function is executed #####
+##################################################################################################
+
+Playchain <- function(maxpoint=10,auto=2,Player=1:14,Game_number=100,output="No"){
+  Number_of_Players <- length(Player)
+  Matrix_Wins <- matrix(nrow = Number_of_Players,ncol = Game_number,byrow = TRUE,
+                        dimnames = list(Player,1:Game_number)) # Empty matrix of scores 
+  Counter_win <- 0      #### Initialize the win and lose
+  Counter_lose <- 0
+  Mac_win <- 0
+  Mac_lose <- 0
+  H_vector <- c()
+  M_vector <- c()
+  Empty_list <- list()
+  if(auto==1){
+    if(Number_of_Players==1){ #### When the number of players is one 
+      for(i in 1:Game_number){
+      Player2 = Player
+      State = Play(maxpoint,auto,Player1,Player2,output)
+      if(State %in% c(-1,-2,-3)){
+        H_vector = c(H_vector,1)
+        M_vector = c(M_vector,-1)
+      }else if(State %in% c(1,2,3)){
+        H_vector = c(H_vector,-1)
+        M_vector = c(M_vector,1)
+      }
+      }
+      for(y in H_vector){
+        if(y==1){
+          Counter_win = Counter_win+1
+        }else{
+          Counter_lose = Counter_lose+1
+        }
+      }
+      for (x in M_vector){
+        if(x == 1)
+          Mac_win = Mac_win +1
+        else
+          Mac_lose = Mac_lose +1
+      }
+      total = Mac_win + Mac_lose
+      Total = Counter_win+Counter_lose
+      Rate = round((Counter_win/Total)*100,1)
+      rate = round((Mac_win/total)*100,1)
+      cat("Machine_",Player2,"wins",rate,"%","(",Mac_win,"out of ",total,")","\n")
+      cat("Human:","Wins",Rate,"%","(",Counter_win,"out of ",Total,")","\n")
+    }else {
+    for(i in 1:Game_number){
+      Player2 <- sample(Player,1,replace = FALSE)
+      State = Play(maxpoint,auto,Player1,Player2,output) # Return the ball state 
+      if(State %in% c(-1,-2,-3)){
+        Player2 = as.character(Player2)
+        H_vector <- c(H_vector,1) # Represent win for Player1
+        Matrix_Wins[as.character(Player2),i]=-1 #Represents loss for Player2
+      }else if(State %in% c(1,2,3)){
+        H_vector <- c(H_vector,-1) #Represents loss for Player1
+        Matrix_Wins[as.character(Player2),i]=1  # Represents win for Player2
+      }
+    }
+    Un <- sort(unique(c(Matrix_Wins))) 
+    Result <- t(apply(Matrix_Wins,1, function(x) table(factor(x,Un)))) #column_1: -1 Column_2: 1
+    Final <- as.array(Result)
+    for(x in 1:nrow(Final)){ # Loop over the matrix
+      Per_rate <- round((Final[x,2]/(Final[x,1]+Final[x,2]))*100,1)
+      Sum <- Final[x,1]+Final[x,2]
+      cat("Player",Player[x],"wins: ",Per_rate,"%","(",Final[x,2],"out of ",Sum,"games",")","\n") 
+    }
+    for(y in H_vector){
+      if(y==1){
+        Counter_win = Counter_win+1
+      }else{
+        Counter_lose = Counter_lose+1
+      }
+    }
+    Total = Counter_win+Counter_lose
+    Rate = round((Counter_win/Total)*100,1)
+    cat("Human:","Wins",Rate,"%","(",Counter_win,"out of ",Total,")","\n")
+    }
+  }else if(auto==2){
+  for(i in 1:Game_number){
+    Select <- sample(Player,2,replace = FALSE)
+    Player1 <- Select[1]
+    Player2 <- Select[2]
+    if(Player1 < Player2){
+    Empty_list[[i]] <- c(Player1,Player2)
+    }else{
+      Empty_list[[i]] <- c(Player2,Player1) 
+    }
+   State = Play(maxpoint,auto,Player1,Player2,output) # Return status of ball 
+   if(Player1==Player2){
+     if(State %in% c(-1,-2,-3)){
+       Matrix_Wins[1,i]=1 # Represent win for Player1
+       Matrix_Wins[2,i]=-1 #Represents loss for Player2
+     }else if(State %in% c(1,2,3)){
+       Matrix_Wins[1,i]=-1 #Represents loss for Player1
+       Matrix_Wins[2,i]=1  # Represents win for Player2
+     }
+   }else{
+   if(State %in% c(-1,-2,-3)){
+     Matrix_Wins[as.character(Player1),i]=1 # Represent win for Player1
+     Matrix_Wins[as.character(Player2),i]=-1 #Represents loss for Player2
+   }else if(State %in% c(1,2,3)){
+     Matrix_Wins[as.character(Player1),i]=-1 #Represents loss for Player1
+     Matrix_Wins[as.character(Player2),i]=1  # Represents win for Player2
+   }
+   }
+  }
+  Un <- sort(unique(c(Matrix_Wins))) # Sort the matrix of reward 
+  Result <- t(apply(Matrix_Wins,1, function(x) table(factor(x,Un)))) #column_1: -1 Column_2: 1
+  Final <- as.array(Result)
+  for(x in 1:nrow(Final)){ # Loop over the matrix
+    Per_rate <- round((Final[x,2]/(Final[x,1]+Final[x,2]))*100,1)
+    Sum <- Final[x,1]+Final[x,2]
+ cat("Player",Player[x],"wins: ",Per_rate,"%","(",Final[x,2],"out of ",Sum,"games",")","\n") 
+  }
+  print(as.matrix(table(sapply(Empty_list, deparse))))
+  }
+  if(Number_of_Players > 1)
+    return(Final)
+} 
+
+
+
+######### Multiple times of play by machines 
+
+
+ChainsofPlay <- function(maxpoint=50,auto=2,Player,PlayNumber,outname="1_2",output="No"){
+  Number <- length(Player)
+  Matrix_Plays <- matrix(nrow = Number,ncol = PlayNumber,byrow = TRUE,
+                         dimnames = list(Player,1:PlayNumber)) # Empty matrix
+  Store <- list() # Stores the outcome of each machines
+  for(n in 1:PlayNumber){
+    States = Playchain(maxpoint,auto,Player,Game_number = 10000,output = "No")
+    Store[[n]] <- States # List of matrices of scores for each play.
+  }
+  Vic = length(Store)
+  if(Player[1]==Player[2]){
+    for(x in 1:Vic){
+      for(y in 1:length(Player)){
+        Matrix_Plays[y,x]=round((Store[[x]][y,2]/(Store[[x]][y,1]+Store[[x]][y,2]))*100,3)
+      }
+    }
+    for (v in 1:nrow(Matrix_Plays)) {
+      a <- sum(Matrix_Plays[v,])/PlayNumber
+      cat("Average winning probability of","Player",Player[v],":",a,"\n")
+    }
+  }else{
+  for(x in 1:Vic){
+    for(y in Player){
+      Post=as.character(y)
+      Matrix_Plays[Post,x]=round((Store[[x]][Post,2]/(Store[[x]][Post,1]+Store[[x]][Post,2]))*100,3)
+    }
+  }
+    for (v in 1:nrow(Matrix_Plays)) {
+      a <- sum(Matrix_Plays[v,])/PlayNumber
+      cat("Average winning probability of ","Player",Player[v],":",a,"\n")
+    }
+  }
+  path="D:/Project/aims-senegal-template-frensh-and-english/images/"
+  output1 <- paste(path,outname,".pdf",sep="")
+  pdf(file = output1,  width = 11, height = 8)
+  for(w in 1:nrow(Matrix_Plays)){
+    xdxdxd <- Matrix_Plays[w,]
+    mid_x <- (min(xdxdxd)+max(xdxdxd))/2
+    low_x <- floor(min(c(mid_x-2.45,xdxdxd))*10)/10
+    upp_x <- ceiling(max(c(mid_x+2.45,xdxdxd))*10)/10
+   print(c(low_x,upp_x,mid_x))
+    plot(xdxdxd,type = "l",ylab = "Percentage of wins",xlab = "Number of Play",lwd=2,
+        cex.axis=2,cex.main=2,cex.lab=1.8, ylim=c(0 ,100),
+         main = substitute(paste("Number of wins by: ","Machine_",a),list(a=Player[w])))
+  }
+  dev.off() 
+  return(Matrix_Plays)
+}
+
+
+
+
+
+
+
+
+
+
+
+### Final Run code:
+ChainsofPlay(maxpoint=50,auto=2,c(2,16),PlayNumber=150,output="No",outname = "2_16")
+
+
+
+
+dat <- matrix(runif(40,1,20),ncol=4) # make data
+matplot(x, type = c("l"),pch=1,col = 1:4,ylim = c(0,100)) #plot
+legend("topleft", legend = 1:2, col=1:2, pch=1) # optional legend
+
+v=seq(1,5)
+plot(v,x[1,],type="l",col="red",ylim = c(0,100))
+lines(v,x[2,],col="green")
+legend("topleft", legend = 1:2, col=1:2, pch=1) 
+
+
+x  <- seq(-2, 2, 0.05)
+y1 <- pnorm(x)
+y2 <- pnorm(x, 1, 1)
+
+plot( x, y1, type="l", col="red" )
+par(new=TRUE)
+plot( x, y2, type="l", col="green" )
+
+View(D1)
+View(D2)
+View(D3)
+
+
+par(mfrow=c(1,3))
+plot(D1[2,],type = "l",ylab = "Percentage of wins",xlab = "Number of Play",
+     lwd=2, cex.axis=2,cex.main=2,cex.lab=1.8,xlim = c(0,50),ylim = c(23,100),
+     main = "machine 8 ")
+plot(D2[2,],type = "l",ylab = "Percentage of wins",xlab = "Number of Play",
+     lwd=2, cex.axis=2,cex.main=2,cex.lab=1.8,xlim = c(0,100),ylim = c(40,80),
+     main = "machine 11 ")
+plot(D3[2,],type = "l",ylab = "Percentage of wins",xlab = "Number of Play",
+     lwd=2, cex.axis=2,cex.main=2,cex.lab=1.8,xlim = c(0,200),ylim = c(11.9,56.1),
+     main = "machine 13 ")
+
+
+
+ddd1
+ddd3
+ddd5
+
+d1=ddd1
+
+#ddd2
+d2=ddd3
+#View(ddd4)
+d3=ddd5
+
+par(mfrow=c(1,1))
+x<-seq(1,150)
+
+plot(x = x,y = d1[2,], type="l",col="red",ylim = c(0,100),lwd=2,
+     main = "Comparison of untrained and trained machine",ylab = "Percentage of win",
+     xlab = "Number of play")
+lines(x,d2[2,],col="blue",lwd=2)
+legend("bottomright", legend = c("Untrained machine","Trained machine"), col=c("red","blue"), pch=1,angle = 90,
+       pt.cex = 1,cex = 1,lwd = 2)
+
+plot(x = x,y = d1[2,], type="l",col="red",ylim = c(0,100),lwd=2,
+     main = "Comparison of untrained and trained machine",ylab = "Percentage of win",
+     xlab = "Number of play")
+lines(x,d3[2,],col="blue",lwd=2)
+legend("bottomright", legend = c("Untrained machine","Trained machine"), col=c("red","blue"), pch=1,angle = 90,
+       pt.cex = 1,cex = 1,lwd = 2)
+
+
+
+
+
+
+
+#Average winning probability of Player 16 : 80.15279 
+#Average winning probability of Player 16 : 19.84721 
+#[1] 69.800 84.700 77.249
+#[1] 15.300 30.200 22.751
+
+
+#Average winning probability of  Player 13 : 27.65107 
+#Average winning probability of  Player 16 : 72.34893 
+#[1] 21.90 56.40 39.18
+#[1] 43.60 78.10 60.82
+
+
+
+#Average winning probability of Player 16 : 74.64762 
+#Average winning probability of Player 16 : 25.35238 
+#[1] 57.0000 79.9000 68.4425
+#[1] 20.1000 43.0000 31.5575
+
+#Average winning probability of  Player 13 : 53.16627 
+#Average winning probability of  Player 16 : 46.83373 
+#[1] 45.00 75.40 60.19
+#[1] 24.60 55.00 39.81
+
+
+
+
+
