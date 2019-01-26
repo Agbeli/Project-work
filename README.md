@@ -22,5 +22,6 @@ The field of the game is represented by seven fields and central line. The natur
 
 The link provide detail description and the mathematics behind the game [Link](https://en.wikipedia.org/wiki/Tennis_(paper_game))
 
-#Contributor:
+# Contributor:
+---
 - Professor Arne Ring. 
