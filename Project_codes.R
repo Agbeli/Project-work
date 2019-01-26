@@ -337,7 +337,7 @@ Machine_16=function(Point_pl,Point_opp,ball,output="Yes"){
 }
 
 # Update the strategy after each round of play 
-updatestrat=function(chain,value){
+updatestrat = function(chain,value){
   chainy = colSums(abs(chain))	
   x = max((1:length(chainy))[chainy>0])
   {
@@ -686,6 +686,7 @@ ChainsofPlay <- function(maxpoint=50,auto=2,Player,PlayNumber,outname="1_2",outp
 
 
 ### Final Run code:
+#erstinit()
 #ChainsofPlay(maxpoint=50,auto=2,c(2,16),PlayNumber=150,output="No",outname = "2_16")
 
 

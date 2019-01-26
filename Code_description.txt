@@ -3,3 +3,90 @@
 - The implementation of the program was done using R language. This is an free open source software can be accessible by anyone.
 The goal of the work is to develop a proposed learning algorithm to solve the complexity of the tennis game and also 
 develop a non-learning algorithms using probability distributions. 
+Playing states= 51 * 51 * 5 * 51 state space.
+-- Human draw is define in human function
+-- Non-learning machines with distribution and three deterministic machines.
+-- Input variables: maxpoint=50, players=1:17, output="Yes/No".
+-- Return a draw of each player y.
+-- Detail description of the learning algorithm:
+-----Initialization of learning strategy 
+# defstrat function: The initial strategy of the learning with a four dimensional array;
+ Input variable INITPUNKT=1
+ 1. First dimension: The points of learning machine.
+ 2. Second dimension: The points of opponent.
+ 3. Third dimension: The possible position of the ball during play. 
+ 4. Four dimension: The next draw of the learning machine. 
+The intial strategy generate a four dimension of point with a corresponding indexes. 
+which return(stratyx), which is a training strategy of the learning machine.
+INPOINT = 1 # For training  
+MINPOINTS = 1 # Lowest for making draw.
+LEARNPOINTS = rep(0,3) # Possible position of the ball.
+dim(LEARNPOINTS) <- c(1,3) # The learnpoint is about the movement of the ball.
+LEARNPOINTS[1] = 1 # Index the vector of points
+LEARNPOINTS[2] = 1
+LEARNPOINTS[3] = 1
+---Trigger initial strategy
+### erstinit function is to trigger the initial strategy of the learning from the output of defstrat function. This 
+function do not return anything but only trigger the initial moves. 
+
+----Moves of the learning machine: The draws of the machine
+## Machine_16 function is move of the learning machine. This machine returns the draws from the given strategy of vector 
+veccy. The use of uniform distribution was implemented in this function.
+
+----Update function
+## updatestrat function is the function for updating the strategy of the machine after each round of game play. 
+Input variable: The matrix of outcome and the position of ball at end of the game.
+Where a loop is run through the matrix for training. 
+
+----Output function
+The output function is to show the outcome during play.
+Input variables: Player1,Player2,maxpoint1,maxpoint2, ball, output="No/Yes"
+Player1= The draw of player one
+Player2 = The draw of player two 
+maxpoint1 = The current points of player one
+maxpoint2 = The current points of player two.
+ball = The position of the ball during play.
+output = Yes or No 
+
+--- Evaluation function
+
+The function returns the ball at each draw of the game. 
+Input variable: Player1, Player2, ball
+
+----Winner function
+The function declares the winner of the game. 
+Input variable: ball, output="Yes/No"
+
+--- Computer bid function:
+This function call the computers to play.
+Input variables: Player1,Player2,ball,output="Yes/No"
+
+###Maxpoint = 50 points
+# auto =0: Human vrs Human tournament
+# auto =1: Human vrs Computer tournament 
+# auto =2: Computer vrs Computer tournament
+######## The play function execute the tournament match between two strategies
+---Play function:
+This is function runs the experiment of game. 
+Input variables: maxpoint,auto,Player1,Player2,output="No"
+return position of ball. 
+This function contains the matrix that record the possible outcome. 
+
+--Playchain function:
+This execute the play function over a number times.
+Input variables: maxpoint=50,auto=2,Player=1:17,Game_number=100,output="No/Yes"
+Score of 1 assign to the winning player
+Score of -1 assign to the winning player
+return matrix of win.
+
+---ChainsofPlay function :
+This execute the playchain function.
+Input variable: maxpoint=50,auto=2,Player,PlayNumber=1000,outname="1_2",output="No/Yes".
+
+
+### Final Run code:
+#ChainsofPlay(maxpoint=50,auto=2,1:15,PlayNumber=150,output="No",outname = "2_16")
+
+## Learning machine vrs non-learning machine:
+erstinit()
+#ChainsofPlay(maxpoint=50,auto=2,c(11,16),PlayNumber=200,output="No",outname = "2_16")
