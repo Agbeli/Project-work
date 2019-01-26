@@ -1,0 +1,5 @@
+#  Description of the program 
+
+- The implementation of the program was done using R language. This is an free open source software can be accessible by anyone.
+The goal of the work is to develop a proposed learning algorithm to solve the complexity of the tennis game and also 
+develop a non-learning algorithms using probability distributions. 
