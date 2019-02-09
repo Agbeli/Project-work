@@ -24,4 +24,4 @@ The link provide detail description and the mathematics behind the game [Link](h
 
 # Contributor:
 ---
-- *Professor Arne Ring-University of Free State, South Africa.*
+- *Professor Arne Ring-University of the Free State, South Africa.*
