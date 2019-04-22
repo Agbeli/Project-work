@@ -1,4 +1,3 @@
-
 #############################################################################
 ############ Tennis game Implemetation############################################
 #############################################################################
@@ -9,11 +8,11 @@
 #The starting point maxpoint = 50
 ##### Takes three input variable 
 
-###Human draw function
+###Human draw function 
 Human_bid <- function(maxpoint){
   while(TRUE){
     human<-as.numeric(readline("Enter a bid: "))
-    if(human > maxpoint){ #When draw is greater than current point
+    if(human > maxpoint){
       cat("Make a bid between 1 and ",maxpoint)
     }else{
       FALSE
@@ -27,12 +26,12 @@ Human_bid <- function(maxpoint){
 #### Implementation of 15 differents non-learning machine using 
 #### probability distributions 
 
-### 
+####.
 Machine_1 <- function(Point_pl,Point_opp,ball,output){
   if(Point_pl <= 0){
     y = 0
   }else{
-    y = floor(runif(1,1,Point_pl)) # Random generate a value using uniform distribution.
+    y = floor(runif(1,1,Point_pl))
   }
   return(y)
 }
@@ -56,7 +55,7 @@ Machine_2 <- function(Point_pl,Point_opp,ball,output){
 }
 
 
-# Second machine with probability of 0.35 generates a draw.
+# Second machine with 0.35 selection of points.
 Machine_3 <- function(Point_pl,Point_opp,ball,output){
   if(Point_pl <= 0){
     y =0
@@ -66,7 +65,8 @@ Machine_3 <- function(Point_pl,Point_opp,ball,output){
   return(y)
 }
 
-# Second machine with quantile binomial function to generate a value 
+# Second machine with quarter binomial selection which is better off than the
+#previous machine.
 Machine_4 <- function(Point_pl,Point_opp,ball,output){
   if(Point_pl <= 0){
     y =0
@@ -78,8 +78,6 @@ Machine_4 <- function(Point_pl,Point_opp,ball,output){
   return(y)
 }
 
-
-#### The use of random binomial function with a probability of 0.5
 Machine_5 <- function(Point_pl,Point_opp,ball,output){
   if(Point_pl <= 0){
     y = 0
@@ -94,7 +92,6 @@ Machine_5 <- function(Point_pl,Point_opp,ball,output){
   return(y)
 }
 
-### Random binomial distribtion with conditons
 Machine_6 <- function(Point_pl,Point_opp,ball,output){
   if(Point_pl <= 0){
     y <- 0
@@ -151,14 +148,14 @@ Machine_9 <- function(Point_pl,Point_opp,ball,output){
   return(y)
 }
 
-# In this function random poisson distribution was used.
+
 Machine_10 <- function(Point_pl,Point_opp,ball,output){
   if(Point_pl <= 0){
     y = 0
   }else{
    y = rpois(Point_pl,2)
    y = max(Com10)
-   if(Com10 == 0 || Com10 > Point_pl){
+   if(y == 0 || y > Point_pl){
      y = 1
    }else{
      y
@@ -172,7 +169,7 @@ Machine_11 <- function(Point_pl,Point_opp,ball,output){
     y = 0
   }else {
     y = rpois(Point_pl,5)
-    y = max(Com11)
+    y = max(y)
     if(y == 0 || y > Point_pl){
       y = 1
     }else{
@@ -187,7 +184,7 @@ Machine_12 <- function(Point_pl,Point_opp,ball,output){
     y = 0
   }else {
     y = rpois(Point_pl,8)
-    y = ceiling((max(Com12)-min(Com12))/2)
+    y = ceiling((max(y)-min(y))/2)
     if(y == 0 || y > Point_pl){
       y = 1
     }else{
@@ -205,7 +202,7 @@ Machine_13 <- function(Point_pl,Point_opp,ball,output){
       y <- max(Point_opp,1)
     }else{
       if(ball <= 1){#plays small when does not need to play high
-        y  <- min(Point_pl,max(rbinom(1,10,0.03),1))
+        y <- min(Point_pl,max(rbinom(1,10,0.03),1))
       }else{
         y <- min(Point_pl,max(rbinom(1,Point_opp,0.98),1))#plays very high when in danger, but not higher than points of opponent 
       }
@@ -221,12 +218,12 @@ Machine_14 <- function(Point_pl,Point_opp,ball,output){
   if(Point_pl <= 0){
     y = 0
   }else if(Point_pl==1){
-    y =1
+    y = 1
   }else{
     First = ceiling(Point_pl*0.4)
     Second = ceiling(Point_pl*0.6)
     y = rhyper(1,First,Second,Point_pl)
-    if(y ==0 || y > Point_pl){
+    if(y == 0 || y > Point_pl){
       y = 1
     }else{
       y
@@ -234,7 +231,6 @@ Machine_14 <- function(Point_pl,Point_opp,ball,output){
   }
   return(y)
 }
-
 
 Machine_15 <- function(Point_pl,Point_opp,ball,output){
   if(Point_pl <= 0){
@@ -250,8 +246,6 @@ Machine_15 <- function(Point_pl,Point_opp,ball,output){
   return(y)
 }
 
-
-#### The repeated function of 13 for self-play purpose.
 Machine_17 <- function(Point_pl,Point_opp,ball,output){
   if(Point_pl <= 0){
     y <- 0
@@ -260,7 +254,7 @@ Machine_17 <- function(Point_pl,Point_opp,ball,output){
       y <- max(Point_opp,1)
     }else{
       if(ball <= 1){#plays small when does not need to play high
-          y <- min(Point_pl,max(rbinom(1,10,0.03),1))
+        y <- min(Point_pl,max(rbinom(1,10,0.03),1))
       }else{
         y <- min(Point_pl,max(rbinom(1,Point_opp,0.98),1))#plays very high when in danger, but not higher than points of opponent 
       }
@@ -268,6 +262,37 @@ Machine_17 <- function(Point_pl,Point_opp,ball,output){
   }
   return(y)
 }
+
+
+Machine_18 <- function(Point_pl,Point_opp,ball,output){
+  V = 1
+  if(Point_pl == 50){
+  V = sample(c(1,2,3),1,replace = TRUE)
+  y = switch (V,
+    Machine_8(Point_pl,Point_opp,ball,output),
+    Machine_11(Point_pl,Point_opp,ball,output),
+    Machine_13(Point_pl,Point_opp,ball,output)
+  )
+  }
+  y =  switch (V,
+               Machine_8(Point_pl,Point_opp,ball,output),
+               Machine_11(Point_pl,Point_opp,ball,output),
+               Machine_13(Point_pl,Point_opp,ball,output)
+  )
+  return(y)
+}
+
+Machine_19 <- function(Point_pl,Point_opp,ball,output){
+  V = sample(c(1,2,3),1,replace = TRUE)
+  y = switch (V,
+            Machine_8(Point_pl,Point_opp,ball,output),
+            Machine_11(Point_pl,Point_opp,ball,output),
+            Machine_13(Point_pl,Point_opp,ball,output))
+  
+  return(y)
+}
+
+
 
 
 maxpoint =50	
@@ -314,15 +339,17 @@ erstinit<-function(){
   
   straty[1,,,,] <<- defstrat(INITPUNKT=INPOINT)
   NumberofPlay <<- 0			
+  POINTS <<- 0 
+  LEARN <<- 0
 }
 
-### Initialize function to acquire initial strategy.
 erstinit()
 
 
-#### Next move of the learning machine
+#### Next move of the machine
+
+
 Machine_16=function(Point_pl,Point_opp,ball,output="Yes"){
-  #### Vector of possible draws
   veccy=c(0,straty[1, Point_pl+1, Point_opp+1, ball+3,])
   if(output=="Yes")
     cat(veccy,"\n")
@@ -332,18 +359,19 @@ Machine_16=function(Point_pl,Point_opp,ball,output="Yes"){
   lvec=length(veccy)
   for (ii in 1:lvec)
     vecu[ii]=sum(veccy[1:ii])
-  y = max((1:lvec)[vecu<choice])-1       
-  return(y)  
+  Com16=max((1:lvec)[vecu<choice])-1       
+  return(Com16)  
 }
 
-# Update the strategy after each round of play 
-updatestrat = function(chain,value){
+# Update the strategy after each play 
+
+updatestrat=function(chain,value){
   chainy = colSums(abs(chain))	
-  x = max((1:length(chainy))[chainy>0])
+  Com16 = max((1:length(chainy))[chainy>0])
   {
     LEARN <<- LEARN +1
     pointy=(LEARNPOINTS[abs(value)])*(-value)
-    for(ii in 1:x){
+    for(ii in 1:Com16){
       coly=chain[,ii]
       straty[1,coly[1]+1,coly[2]+1,coly[3]+3, coly[4]+1] <<-
         max(c(straty[1,coly[1]+1,coly[2]+1,coly[3]+3, coly[4]+1]+pointy, MINPOINTS))
@@ -356,7 +384,7 @@ updatestrat = function(chain,value){
 
 
 
-### Output function after each draws by both players.
+### Output of each draw 
 
 Output <- function(Player_1,Player_2,ball,maxpoint1,maxpoint2,output){
 if(output=="Yes"){
@@ -418,22 +446,19 @@ Winner <- function(ball,output){
 
 
 
-###### Call function of the type of machine 
+###### Call the type of strategy 
 Computer_bid <- function(Point_pl,Point_opp,ball,output,Player){ #Select type of machine 
   get(paste('Machine_',as.character(Player),sep=""))(Point_pl,Point_opp,ball,output)
 }
 
 
 
-###Maxpoint = 50 points
-# auto =0: Human vrs Human tournament
-# auto =1: Human vrs Computer tournament 
-# auto =2: Computer vrs Computer tournament
+
 ######## The play function execute the tournament match between two strategies 
 
 Play <- function(maxpoint,auto,Player1,Player2,output="No"){
   recordstatus=rep(0,5*maxpoint)
-  dim(recordstatus)<-c(5,maxpoint) ## Matrix of recorded outcome.
+  dim(recordstatus)<-c(5,maxpoint)
   timeline <- 1
   ball = 0
   maxpoint1 <- maxpoint
@@ -628,6 +653,7 @@ Playchain <- function(maxpoint=10,auto=2,Player=1:14,Game_number=100,output="No"
 
 
 
+
 ######### Multiple times of play by machines 
 ######### Return matrix of victory 
 
@@ -663,7 +689,7 @@ ChainsofPlay <- function(maxpoint=50,auto=2,Player,PlayNumber,outname="1_2",outp
       cat("Average winning probability of ","Player",Player[v],":",a,"\n")
     }
   }
-  path="Folder name" ### Path for the display of plots
+  path="Directory to save graphs"
   output1 <- paste(path,outname,".pdf",sep="")
   pdf(file = output1,  width = 11, height = 8)
   for(w in 1:nrow(Matrix_Plays)){
@@ -676,11 +702,9 @@ ChainsofPlay <- function(maxpoint=50,auto=2,Player,PlayNumber,outname="1_2",outp
         cex.axis=2,cex.main=2,cex.lab=1.8, ylim=c(0 ,100),
          main = substitute(paste("Number of wins by: ","Machine_",a),list(a=Player[w])))
   }
-  #dev.off() 
+  dev.off() 
   return(Matrix_Plays)
 }
-
-
 
 
 
@@ -688,6 +712,15 @@ ChainsofPlay <- function(maxpoint=50,auto=2,Player,PlayNumber,outname="1_2",outp
 ### Final Run code:
 #erstinit()
 #ChainsofPlay(maxpoint=50,auto=2,c(2,16),PlayNumber=150,output="No",outname = "2_16")
+
+
+
+
+
+
+### Final Run code:
+ChainsofPlay(maxpoint=50,auto=2,c(16,18),PlayNumber=150,output="No",outname = "16_18")
+ChainsofPlay(maxpoint=50,auto=2,c(16,19),PlayNumber=150,output="No",outname = "16_19")
 
 
 par(mfrow=c(1,3))
@@ -746,6 +779,16 @@ legend("bottomright", legend = c("Untrained machine","Trained machine"), col=c("
 #Average winning probability of  Player 16 : 46.83373 
 #[1] 45.00 75.40 60.19
 #[1] 24.60 55.00 39.81
+
+
+
+
+
+
+
+
+
+
 
 
 
